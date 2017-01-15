@@ -1,0 +1,3 @@
+[submodule "sweep-sdk"]
+	path = sweep-sdk
+	url = git@github.com:zakaprov/sweep-sdk.git
