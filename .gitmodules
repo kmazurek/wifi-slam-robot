@@ -1,0 +1,3 @@
+[submodule "sweep-sdk"]
+	path = sweep-sdk
+	url = https://github.com/scanse/sweep-sdk
