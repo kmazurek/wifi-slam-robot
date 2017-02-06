@@ -1,4 +1,4 @@
-from wifi import Cell, Scheme
+from wifi import Cell
 
 def Search():
     network_list = []
@@ -11,4 +11,5 @@ def Search():
     return network_list
 
 if __name__ == '__main__':
-    print(Search())
+    for cell in Search():
+        print(cell.ssid + " " + str(cell.signal))
