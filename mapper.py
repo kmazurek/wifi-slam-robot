@@ -41,24 +41,29 @@ class NetworkThread(threading.Thread):
 
 
 class MotorThread (threading.Thread):
-    def __init__(self, thread_name, motor, stop_event, pause_event):
+    def __init__(self, thread_name, motor1, motor2, stop_event, pause_event):
         threading.Thread.__init__(self)
-        self.motor = motor
+        self.motor1 = motor1
+        self.motor2 = motor2
         self.stop_event = stop_event
         self.pause_event = pause_event
         self.name = thread_name
 
     def run(self):
         print ("Starting %s" % self.name)
-        self.motor.run_direct()
+        self.motor1.run_direct()
+        self.motor2.run_direct()
 
         while not self.stop_event.is_set():
             if self.pause_event.is_set():
-                self.motor.duty_cycle_sp = 0
+                self.motor1.duty_cycle_sp = 0
+                self.motor2.duty_cycle_sp = 0
             else:
-                self.motor.duty_cycle_sp = 50
+                self.motor1.duty_cycle_sp = 50
+                self.motor2.duty_cycle_sp = 50
 
-        self.motor.stop()
+        self.motor1.stop()
+        self.motor2.stop()
 
         print ("Exiting %s" % self.name)
 
@@ -81,10 +86,11 @@ if __name__ == '__main__':
     networkThread.start()
 
     motorA = ev3.LargeMotor("outA")
+    motorD = ev3.LargeMotor("outD")
     motorStop = threading.Event()
     motorPause = threading.Event()
 
-    motorThread = MotorThread("motor thread", motorA, motorStop, motorPause)
+    motorThread = MotorThread("motor thread", motorA, motorD, motorStop, motorPause)
     motorThread.start()
 
     btn = ev3.Button()
