@@ -1,6 +1,5 @@
 import network.tcp_socket as tcp
 import network.wifi_scanner as scanner
-import sweep.sweep_lidar as sweep
 import sys
 import threading
 import time
