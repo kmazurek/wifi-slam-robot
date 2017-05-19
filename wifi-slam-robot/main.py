@@ -1,5 +1,5 @@
-import network.tcp_socket as tcp
-import network.wifi_scanner as scanner
+from .network import tcp_socket as tcp
+from .network import wifi_scanner as scanner
 import sys
 import threading
 import time
