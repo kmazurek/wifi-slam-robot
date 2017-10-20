@@ -22,13 +22,14 @@ class TcpSocket:
         print('TCP socket: Listening for incoming connections . . .')
         self.tcp_socket.bind((self.listen_address, self.listen_port))
         self.tcp_socket.listen(1)
+
         connection, address = self.tcp_socket.accept()
         self.connection = connection
         print('Accepted TCP connection from {}'.format(address))
 
     def send_data(self, data):
         if self.connection is not None:
-            self.connection.send(str(data).encode('utf8'))
+            self.connection.send(str(data).encode('utf8'))      # TODO serialize to JSON
 
 
 class TcpSocketThread(threading.Thread):
@@ -39,7 +40,7 @@ class TcpSocketThread(threading.Thread):
         self.input_queue = input_queue
 
     def run(self):
-        print ('Starting %s . . .' % self.name)
+        print('Starting %s . . .' % self.name)
 
         with TcpSocket() as socket:
             socket.listen_and_accept()
@@ -47,6 +48,6 @@ class TcpSocketThread(threading.Thread):
             while not self.stop_event.is_set():
                 data_to_upload = self.input_queue.get()
                 if data_to_upload:
-                    socket.send_data(data_to_upload)     # TODO serialize to JSON
+                    socket.send_data(data_to_upload)
 
-        print ('Stopping %s . . .' % self.name)
+        print('Stopping %s . . .' % self.name)
