@@ -1,10 +1,10 @@
 import socket
 import sys
-import re
 import json
-from breezyslam.algorithms import RMHC_SLAM
 from breezyslam.components import Laser
-from rx import Observable
+
+MAP_SIZE_PIXELS = 800
+MAP_SIZE_METERS = 32
 
 
 def print_json_response(response):
@@ -23,13 +23,6 @@ class SweepLaser(Laser):
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcp_socket.connect(("192.168.0.192", 8889))
-
-# mapbytes = bytearray(800*800)
-# slam = RMHC_SLAM(lidar, 800, 35)
-
-# Observable.from_iterable(scan.samples) \
-#                     .map(lambda sample: sample.angle) \
-#                     .subscribe(lambda angle: print(angle))
 
 response_index = 0
 response_buffer = ""
@@ -50,10 +43,6 @@ try:
                 response_buffer = ""
             else:
                 response_buffer += char
-
-        # slam.update(scan)
-        # x, y, theta = slam.getpos(scan)
-        # slam.getmap(mapbytes)
 
 
 except KeyboardInterrupt:
