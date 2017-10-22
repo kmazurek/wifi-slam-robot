@@ -2,9 +2,9 @@
 import sys
 import time
 import socket
+import sweeppy
 import threading
-from .sweep.sweep import SweepThread
-from .sweep.sweep import Buffer
+import json
 
 is_py2 = sys.version[0] == '2'
 if is_py2:
@@ -24,6 +24,53 @@ def scan(net_interface):
         network_list.append(network)
 
     return network_list
+
+
+class SweepThread(threading.Thread):
+    def __init__(self, stop_event, output_buffer, usb_port_path):
+        threading.Thread.__init__(self)
+        self.stop_event = stop_event
+        self.name = 'Sweep thread'
+        self.output_buffer = output_buffer
+        self.usb_port_path = usb_port_path
+
+    def run(self):
+        print('Starting %s . . .' % self.name)
+
+        with sweeppy.Sweep(self.usb_port_path) as sweep:
+            sweep.set_motor_speed(3)
+            sweep.set_sample_rate(1000)
+            speed = sweep.get_motor_speed()
+            rate = sweep.get_sample_rate()
+
+            print('Motor Speed: {} Hz'.format(speed))
+            print('Sample Rate: {} Hz'.format(rate))
+
+            sweep.start_scanning()
+
+            for scan in sweep.get_scans():
+                self.output_buffer.set_value(scan)
+
+        print('Stopping %s . . .' % self.name)
+
+
+class Buffer:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.value = None
+
+    def get_value(self):
+        self.lock.acquire()
+        result = self.value
+        self.value = None
+        self.lock.release()
+        return result
+
+    def set_value(self, new_value):
+        self.lock.acquire()
+        self.value = new_value
+        self.lock.release()
+
 
 
 class TcpSocket:
@@ -53,7 +100,12 @@ class TcpSocket:
 
     def send_data(self, data):
         if self.connection is not None:
-            self.connection.send(str(data).encode('utf8'))      # TODO serialize to JSON
+            global scan_index
+            print("Sending scan with index {} . . .".format(scan_index))
+            payload = json.dumps(data)
+            bytesSent = self.connection.send((payload + "\n").encode('utf8'))
+            print("Bytes sent: {}".format(bytesSent))
+            scan_index += 1
 
 
 class TcpSocketThread(threading.Thread):
@@ -76,6 +128,8 @@ class TcpSocketThread(threading.Thread):
 
         print('Stopping %s . . .' % self.name)
 
+scan_index = 0
+
 
 if __name__ == '__main__':
     tcpThreadStop = threading.Event()
@@ -88,17 +142,20 @@ if __name__ == '__main__':
     sweepThread = SweepThread(sweepThreadStop, sweepScanBuffer, '/dev/ttyUSB0')
     sweepThread.start()
 
-    scan_index = 0
-
     try:
         while True:
-            wifi_scan_result = ''
-            scan_index += 1
+            wifi_scan_result = []
 
-            for cell in scan('wlan1'):
-                wifi_scan_result += cell.ssid + " " + str(cell.signal) + "\n"
-            socketInputQueue.put("--- SCAN {} ---\n{}\n{}\n".format(scan_index, wifi_scan_result, str(sweepScanBuffer.get_value())))
-            time.sleep(1)
+
+            # for cell in scan('wlan1'):
+            #     wifi_scan_result.append((cell.ssid, cell.signal))
+            # socketInputQueue.put(json.dumps(wifi_scan_result))
+
+            scan = sweepScanBuffer.get_value()
+            if scan:
+                socketInputQueue.put(scan)
+
+            time.sleep(2)
     except KeyboardInterrupt:
         tcpThreadStop.set() # TODO Handle network exceptions?
         sweepThreadStop.set()
