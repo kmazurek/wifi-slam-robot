@@ -14,6 +14,8 @@ class SweepThread(threading.Thread):
         print('Starting %s . . .' % self.name)
 
         with sweeppy.Sweep(self.usb_port_path) as sweep:
+            sweep.set_motor_speed(3)
+            sweep.set_sample_rate(1000)
             speed = sweep.get_motor_speed()
             rate = sweep.get_sample_rate()
 
