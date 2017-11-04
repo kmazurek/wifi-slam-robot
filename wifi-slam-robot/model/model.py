@@ -1,9 +1,6 @@
-from collections import namedtuple
+from typing import NamedTuple
 
 
-class WifiSample(namedtuple('WifiSample', 'ssid', 'signal_strength')):
-    pass
-
-
-class WifiScan(namedtuple('WifiScan', 'samples')):
-    pass
+class WifiSample(NamedTuple):
+    ssid: str
+    signal_strength: int
