@@ -1,44 +1,16 @@
 import sweeppy
-import threading
+from typing import Iterable
 
 
-class SweepThread(threading.Thread):
-    def __init__(self, stop_event, output_buffer, usb_port_path):
-        threading.Thread.__init__(self)
-        self.stop_event = stop_event
-        self.name = 'Sweep thread'
-        self.output_buffer = output_buffer
-        self.usb_port_path = usb_port_path
-
-    def run(self):
-        print('Starting %s . . .' % self.name)
-
-        with sweeppy.Sweep(self.usb_port_path) as sweep:
-            sweep.set_motor_speed(3)
-            sweep.set_sample_rate(1000)
-            speed = sweep.get_motor_speed()
-            rate = sweep.get_sample_rate()
-
-            print('Motor Speed: {} Hz'.format(speed))
-            print('Sample Rate: {} Hz'.format(rate))
-
-            sweep.start_scanning()
-
-            for scan in sweep.get_scans():
-                self.output_buffer.set_value(scan)
-
-        print('Stopping %s . . .' % self.name)
+sweep_motor_speed = 3
+sweep_sample_rate = 1000
 
 
-class Buffer:
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.value = None
+async def sweep_scan_coroutine(usb_port: str) -> Iterable[sweeppy.Scan]:
+    with sweeppy.Sweep(usb_port) as sweep:
+        sweep.set_motor_speed(sweep_motor_speed)
+        sweep.set_sample_rate(sweep_sample_rate)
+        sweep.start_scanning()
 
-    def get_value(self):
-        return self.value
-
-    def set_value(self, new_value):
-        self.lock.acquire()
-        self.value = new_value
-        self.lock.release()
+        for scan in sweep.get_scans():
+            yield scan

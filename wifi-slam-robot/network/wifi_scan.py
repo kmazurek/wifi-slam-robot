@@ -6,6 +6,6 @@ def __scan__(interface: str) -> Iterable[Cell]:
     return Cell.all(str(interface))
 
 
-async def wifi_scan_coroutine(network_interface: str):
+async def wifi_scan_coroutine(network_interface: str) -> Iterable[Cell]:
     while True:
         yield __scan__(network_interface)
