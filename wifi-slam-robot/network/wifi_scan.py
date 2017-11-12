@@ -1,11 +1,18 @@
+from typing import AsyncGenerator
+from typing import List
 from typing import Iterable
 from wifi import Cell
 
 
-def __scan__(interface: str) -> Iterable[Cell]:
-    return Cell.all(str(interface))
+def __scan__(interface: str) -> List[Cell]:
+    result: List[Cell] = []
+    for item in Cell.all(interface):
+        result.append(item)
+    return result
 
 
-async def wifi_scan_coroutine(network_interface: str) -> Iterable[Cell]:
+async def wifi_scan_generator(network_interface: str) -> AsyncGenerator[List[Cell], None]:
     while True:
-        yield __scan__(network_interface)
+        stuff = __scan__(network_interface)
+        print(f'Item in generator: {stuff}')
+        yield stuff
