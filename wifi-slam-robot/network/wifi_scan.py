@@ -1,16 +1,14 @@
-from typing import AsyncGenerator
-from typing import List
+from typing import AsyncGenerator, List
 from wifi import Cell
 
-
-def __scan__(interface: str) -> List[Cell]:
-    result: List[Cell] = []
-    for item in Cell.all(interface):
-        result.append(item)
-    return result
+from model import WifiSample
 
 
-async def wifi_scan_generator(network_interface: str) -> AsyncGenerator[List[Cell], None]:
+def __scan__(interface: str) -> List[WifiSample]:
+    return list(map(lambda cell: WifiSample(cell.ssid, cell.signal), Cell.all(interface)))
+
+
+async def wifi_scan_generator(network_interface: str) -> AsyncGenerator[List[WifiSample], None]:
     while True:
         stuff = __scan__(network_interface)
         yield stuff
