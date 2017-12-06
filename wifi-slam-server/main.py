@@ -8,15 +8,14 @@ parser.add_argument('hostname')
 parser.add_argument('port')
 args = parser.parse_args()
 
-response_index: int = 0
-
 
 def print_json_response(response):
-    global response_index
     try:
-        print(json.loads(response))
-        print(f"Received response with index {response_index}")
-        response_index += 1
+        response = json.loads(response)
+        wifi_scan = response['wifi_scan']
+        sweep_scan = response['sweep_scan']
+
+        print(f'{wifi_scan}\n{sweep_scan}\n')
     except ValueError:
         print("Error decoding JSON response")
 
