@@ -8,7 +8,6 @@ async def socket_coroutine(socket: websockets.WebSocketCommonProtocol, path, net
     while True:
         try:
             data = await network_queue.get()
-            print(f'Sending {data}')
             await socket.send(f"{json.dumps(data)}")
         finally:
             socket.close()

@@ -30,7 +30,7 @@ if __name__ == '__main__':
     event_loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
     tcp_socket_queue = asyncio.Queue(1)
 
-    print('Listening for TCP connections')
+    print('Listening for TCP connections . . .')
     socket_handler = functools.partial(socket_coroutine, network_queue=tcp_socket_queue)
     start_server = websockets.serve(socket_handler, args.hostname, args.port)
     event_loop.run_until_complete(start_server)
