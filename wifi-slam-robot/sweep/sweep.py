@@ -3,8 +3,8 @@ import sweeppy
 
 from model import SweepSample
 
-sweep_motor_speed = 3
-sweep_sample_rate = 1000
+sweep_motor_speed = 2
+sweep_sample_rate = 750
 
 
 async def sweep_scan_generator(usb_port: str) -> AsyncGenerator[List[SweepSample], None]:
