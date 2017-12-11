@@ -32,27 +32,36 @@ def pgm_save(filename, imgbytes, imgsize):
 
 
 def update_slam(scan):
-    # filtered = list(filter(lambda sample: sample[1] != 1, scan))
-    translated = list(map(lambda sample: sample if sample[1] != 1 else [sample[0], 0, sample[2]], scan))
-    mapped = list(map(lambda sample: sample[1] * CM_TO_MM, translated))
-
-    print(f'Received {len(mapped)} LIDAR samples . . .')
-    if len(mapped) == SCAN_SIZE:
+    print(f'Received {len(scan)} LIDAR samples, adjusting . . .')
+    adjusted = prepare_scan_for_slam(scan)
+    print(f'Scan length after adjustment: {len(adjusted)}')
+    if len(adjusted) == SCAN_SIZE:
         print('Updating SLAM . . .')
-        slam.update(mapped)
+        slam.update(adjusted)
 
 
-def adjust_scan(scan):
-    scan_length = len(scan)
-    scan_diff = SCAN_SIZE - scan_length
-    if scan_diff == 0 or abs(scan_diff) > 5:
-        return scan
-    else:
-        for i in range(1, abs(scan_diff)):
-            if scan_diff > 0:
-                scan.append(0)
-            else:
-                scan.pop()
+def prepare_scan_for_slam(scan):
+    translated = list(map(lambda sample: sample if sample[1] != 1 else [sample[0], 0, sample[2]], scan))
+    approximated_angles = list(map(lambda sample: (round(sample[0] / 1000), sample[1], sample[2]), translated))
+    angle_dict = {}
+
+    for sample in approximated_angles:
+        if sample[0] >= 1:
+            stored = angle_dict.get(sample[0])
+            if stored is None or (stored is not None and sample[1] != 0):
+                angle_dict[sample[0]] = sample
+
+    unique_angles = list(angle_dict.values())
+
+    if abs(len(unique_angles) - SCAN_SIZE) > 10:
+        return []
+
+    length_diff = len(unique_angles) - SCAN_SIZE
+    if length_diff != 0:
+        for i in range(abs(length_diff)):
+            unique_angles.append((0, 0, 0))
+
+    return list(map(lambda sample: sample[1] * CM_TO_MM, unique_angles))
 
 
 def process_packet(response):
