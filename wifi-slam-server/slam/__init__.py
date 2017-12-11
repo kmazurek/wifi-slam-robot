@@ -1,5 +1,5 @@
 from breezyslam.algorithms import RMHC_SLAM
-from breezyslam.components import Laser
+from breezyslam.sensors import Laser
 
 MAP_SIZE_PIXELS = 800
 MAP_SIZE_METERS = 16
