@@ -6,7 +6,7 @@ import websockets
 from model import WifiSample, SweepSample
 from network.tcp_socket import socket_coroutine
 from network.wifi_scan import wifi_scan_generator
-from sweep.sweep import sweep_scan_generator
+from sweep import sweep_scan_generator
 from typing import AsyncGenerator, List
 
 
