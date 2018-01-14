@@ -1,4 +1,7 @@
 import requests
+from model import WifiSample
+from typing import List
+from wifi import Cell
 
 
 def send_request(request: dict, address: str, port: int) -> dict:
@@ -7,3 +10,7 @@ def send_request(request: dict, address: str, port: int) -> dict:
         return response.json()
     else:
         return None
+
+
+def scan_wifi_interface(interface: str) -> List[WifiSample]:
+    return list(map(lambda cell: WifiSample(cell.ssid, cell.signal), Cell.all(interface)))
