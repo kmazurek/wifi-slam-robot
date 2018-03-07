@@ -1,5 +1,5 @@
 import argparse
-from model import SyncValue
+from sync import SyncValue
 from network import scan_wifi_interface
 from network import send_request
 from sweep import SweepThread

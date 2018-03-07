@@ -1,4 +1,4 @@
-from model import SyncValue
+from sync import SyncValue
 from threading import Thread, Event
 from typing import AsyncGenerator, List
 from sweeppy import Sweep
