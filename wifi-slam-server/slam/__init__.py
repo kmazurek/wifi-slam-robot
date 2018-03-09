@@ -1,5 +1,6 @@
 from breezyslam.algorithms import RMHC_SLAM
 from breezyslam.sensors import Laser
+from PIL import Image
 
 CM_TO_MM = 10
 MAP_SIZE_PIXELS = 800
@@ -13,19 +14,26 @@ class SweepLaser(Laser):
 
 
 class SLAMSession:
+    # TODO Store robot coordinates (trajectory)
     def __init__(self):
         self.slam = RMHC_SLAM(SweepLaser(), MAP_SIZE_PIXELS, MAP_SIZE_METERS)
+        self.map_image_bytes = bytearray(MAP_SIZE_PIXELS * MAP_SIZE_PIXELS)
+
+    def get_map(self):
+        self.slam.getmap(self.map_image_bytes)
+        return self.map_image_bytes
+
+    def save_map(self, file_path='slam_map.png'):
+        self.slam.getmap(self.map_image_bytes)
+        image = Image.frombuffer('L', (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS), self.map_image_bytes, 'raw', 'L', 0, 1)
+        print(f'Saving map image to {file_path}')
+        image.save(file_path)
 
     def update_slam(self, scan):
         processed_scan = self.__process_scan__(scan)
         if len(processed_scan) == SCAN_SIZE:
             print('Updating SLAM . . .')
             self.slam.update(processed_scan)
-
-    def save_map(self, file_path='slam_map.pgm'):
-        map_bytes = bytearray(MAP_SIZE_PIXELS * MAP_SIZE_PIXELS)
-        self.slam.getmap(map_bytes)
-        self.__pgm_save__(file_path, map_bytes, (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
 
     def __process_scan__(self, scan):
         translated = list(map(lambda sample: sample if sample[1] != 1 else [sample[0], 0, sample[2]], scan))
@@ -49,19 +57,3 @@ class SLAMSession:
                 unique_angles.append((0, 0, 0))
 
         return list(map(lambda sample: sample[1] * CM_TO_MM, unique_angles))
-
-    def __pgm_save__(self, filename, img_bytes, img_size):
-        print('\nSaving image to file %s' % filename)
-
-        output = open(filename, 'wt')
-
-        output.write('P2\n%d %d 255\n' % img_size)
-
-        wid, hgt = img_size
-
-        for y in range(hgt):
-            for x in range(wid):
-                output.write('%d ' % img_bytes[y * wid + x])
-            output.write('\n')
-
-        output.close()
