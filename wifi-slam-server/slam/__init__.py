@@ -19,13 +19,16 @@ class SLAMSession:
         self.slam = RMHC_SLAM(SweepLaser(), MAP_SIZE_PIXELS, MAP_SIZE_METERS)
         self.map_image_bytes = bytearray(MAP_SIZE_PIXELS * MAP_SIZE_PIXELS)
 
-    def get_map(self):
+    def get_map_bytes(self):
         self.slam.getmap(self.map_image_bytes)
         return self.map_image_bytes
 
-    def save_map(self, file_path='slam_map.png'):
+    def get_map_image(self):
         self.slam.getmap(self.map_image_bytes)
-        image = Image.frombuffer('L', (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS), self.map_image_bytes, 'raw', 'L', 0, 1)
+        return Image.frombuffer('L', (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS), self.map_image_bytes, 'raw', 'L', 0, 1)
+
+    def save_map(self, file_path='slam_map.png'):
+        image = self.get_map_image()
         print(f'Saving map image to {file_path}')
         image.save(file_path)
 

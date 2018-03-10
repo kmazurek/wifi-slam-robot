@@ -1,5 +1,6 @@
 import argparse
 import json
+from gui import update_gui
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from slam import SLAMSession
 from sys import argv
@@ -20,6 +21,7 @@ def process_data(data):
 
         print(json.dumps(data))
         slam_session.update_slam(sweep_scan)
+        update_gui(slam_session.get_map_image())
 
     except ValueError:
         print("Error decoding JSON response")
