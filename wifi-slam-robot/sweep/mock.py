@@ -1,4 +1,4 @@
-from model import SweepSample
+from common.model import SweepSample
 from random import randint
 from sync import SyncValue
 from time import sleep

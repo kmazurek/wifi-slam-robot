@@ -3,7 +3,7 @@ from threading import Thread, Event
 from typing import AsyncGenerator, List
 from sweeppy import Sweep
 
-from model import SweepSample
+from common.model import SweepSample
 
 sweep_motor_speed = 2
 sweep_sample_rate = 750

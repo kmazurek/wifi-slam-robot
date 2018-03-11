@@ -1,5 +1,5 @@
 import requests
-from model import WifiSample
+from common.model import WifiSample
 from typing import List
 from wifi import Cell
 

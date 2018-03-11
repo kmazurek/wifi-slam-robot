@@ -1,5 +1,5 @@
 import argparse
-from model import RobotStates
+from common.model import RobotStates
 from sync import SyncValue, StateMachine
 from network import scan_wifi_interface
 from network import send_request

@@ -3,7 +3,7 @@ import asyncio
 import functools
 import websockets
 
-from model import WifiSample, SweepSample
+from common.model import WifiSample, SweepSample
 from network.tcp_socket import socket_coroutine
 from network.wifi_scan import wifi_scan_generator
 from sweep import sweep_scan_generator

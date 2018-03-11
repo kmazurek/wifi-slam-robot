@@ -1,7 +1,7 @@
 from typing import AsyncGenerator, List
 from wifi import Cell
 
-from model import WifiSample
+from common.model import WifiSample
 
 
 def __scan__(interface: str) -> List[WifiSample]:
