@@ -1,6 +1,7 @@
 gitversion==2.1.3
+jsonpickle==0.9.6
 python-ev3dev==0.8.0
+requests==2.18.4
+sweeppy==1.3.0
 wifi==0.3.8
 websockets==4.0.1
-sweeppy==1.3.0
-requests==2.18.4
