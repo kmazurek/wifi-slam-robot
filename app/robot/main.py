@@ -4,9 +4,9 @@ import functools
 import websockets
 
 from common.model import WifiSample, SweepSample
-from network.tcp_socket import socket_coroutine
-from network.wifi_scan import wifi_scan_generator
-from sweep import sweep_scan_generator
+from robot.network.tcp_socket import socket_coroutine
+from robot.network.wifi_scan import wifi_scan_generator
+from robot.sweep import sweep_scan_generator
 from typing import AsyncGenerator, List
 
 

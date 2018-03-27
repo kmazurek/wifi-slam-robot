@@ -1,8 +1,8 @@
 import argparse
 import json
-from gui import update_gui
+from server.gui import update_gui
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from slam import SLAMSession
+from server.slam import SLAMSession
 from sys import argv
 
 parser = argparse.ArgumentParser()

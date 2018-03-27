@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import websockets
 import json
-from slam import *
+from server.slam import *
 
 CM_TO_MM = 10
 

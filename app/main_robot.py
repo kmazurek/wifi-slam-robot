@@ -1,10 +1,10 @@
 import argparse
 from common.model import RobotStates
-from sync import SyncValue, StateMachine
-from network import scan_wifi_interface
-from network import send_request
-from sweep import SweepThread
-from sweep.mock import MockSweepThread
+from robot.sync import SyncValue, StateMachine
+from robot.network import scan_wifi_interface
+from robot.network import send_request
+from robot.sweep import SweepThread
+from robot.sweep.mock import MockSweepThread
 from time import sleep
 from threading import Event
 from typing import List

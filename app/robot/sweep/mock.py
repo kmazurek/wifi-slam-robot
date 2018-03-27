@@ -1,6 +1,6 @@
 from common.model import SweepSample
 from random import randint
-from sync import SyncValue
+from robot.sync import SyncValue
 from time import sleep
 from threading import Thread, Event
 from typing import AsyncGenerator, List
